@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+        <meta charset="utf-8">
+        <title>Picture Puzzle</title>
+    <style>
+        img {
+            width:200px;
+        }
+        #somethingCanvas{
+            border: 1px solid #000000;
+        }
+        .puzzle{
+
+        }
+        .piece1{
+
+        }
+        .piece2{
+
+        }
+        .piece3{
+
+        }
+        .piece4{
+
+        }
+    </style>
+</head>
+    
+<body>
+    <input type="file" id="input" name="input" onchange="loadFile(event)" accept="image/*"/>
+    <img src="" id="image">
+    <div class="puzzle piece1"></div>
+    <div class="puzzle piece2"></div>
+    <div class="puzzle piece3"></div>
+    <div class="puzzle piece4"></div>
+    <canvas id="somethingCanvas">
+        
+    </canvas>
+    
+    <script>
+        //model
+        function $(id) {
+            return document.getElementById(id);
+        }
+
+        var piece1;
+        var piece2;
+        var piece3;
+        var piece4;
+
+        const myInput = $("input");
+        const preview = $("image");
+
+        //view
+        var loadFile = function(event) {
+            preview.src = URL.createObjectURL(event.target.files[0]);
+        };
+
+
+
+
+        //function upload() {
+        //    if (input.files && input.files[0]) {
+        //        preview.src = URL.createObjectURL(input.files[0]);
+        //    }
+        //}
+        //controller
+
+
+
+
+    </script>
+</body>
+</html>
