@@ -2,14 +2,21 @@
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-        <meta charset="utf-8">
-        <title>Picture Puzzle</title>
+    <meta charset="utf-8">
+    <title>Picture Puzzle</title>
+
     <style>
-        img {
-            width:200px;
+        #image {
+            border: 3px rgb(145, 202, 235);
+            border-width: 4px;
+            border-radius: 6px;
+            border-style: solid;
+            
         }
-        #somethingCanvas{
-            border: 1px solid #000000;
+        #puzzleArea {
+            border: 5px dotted #aaaaaa;
+            border-radius: 2px;
+        
         }
         .puzzle{
 
@@ -31,14 +38,17 @@
     
 <body>
     <input type="file" id="input" name="input" onchange="loadFile(event)" accept="image/*"/>
-    <img src="" id="image">
+    <br></br>
+    <img src="" id="image" onload="ready()"></img>
     <div class="puzzle piece1"></div>
     <div class="puzzle piece2"></div>
     <div class="puzzle piece3"></div>
     <div class="puzzle piece4"></div>
-    <canvas id="somethingCanvas">
+
+    <canvas id="puzzleArea">
         
     </canvas>
+
     
     <script>
         //model
@@ -51,26 +61,47 @@
         var piece3;
         var piece4;
 
-        const myInput = $("input");
-        const preview = $("image");
+        
 
         //view
         var loadFile = function(event) {
-            preview.src = URL.createObjectURL(event.target.files[0]);
+            $("image").src = URL.createObjectURL(event.target.files[0]);
         };
 
+        function ready() {
+            var canvas = $("puzzleArea");
+            var image = $("image");
+            var context = canvas.getContext("2d");
+            canvas.width = image.width;
+            canvas.height = image.height;
+            context.drawImage(image, 0, 0, image.width/2, image.height/2, 0, 0, image.width/2, image.height/2);
+        }
+
+
+        // does nothing yet, strings are placeholders for actual onclick positions
+        function getPieces() {
+            if ("click on top left") {
+                cutX = cutY = 0;
+                posX = posY = 0;
+            } else if ("click on top right") {
+                cutX = image.width/2;
+                cutY = 0;
+            } else if ("dkaushedj") {
+                cutX = 0;
+                cutY = image.height/2;
+            } else if ("esfjklf") {
+                cutX = image.width/2;
+                cutY = image.height/2;
+            }
+
+            // draws selected piece in selected quadrant
+            context.drawImage(image, cutX, cutY, image.width/2, image.height/2, posX, posY, image.width/2, image.height/2);
+        }
+        // (img,sx,sy,swidth,sheight,x,y,width,height);
 
 
 
-        //function upload() {
-        //    if (input.files && input.files[0]) {
-        //        preview.src = URL.createObjectURL(input.files[0]);
-        //    }
-        //}
         //controller
-
-
-
 
     </script>
 </body>
