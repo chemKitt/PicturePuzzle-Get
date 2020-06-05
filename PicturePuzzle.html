@@ -3,15 +3,16 @@
 <head>
     <!--
         DONE
-        + load image
+        + load image from best site EVER
         + split image into 4 canvases
         + select the canvas that is clicked on
+        + put selected canvas in selected destination
 
         TO-DO
-        + put selected caqnvas in selected destination
         + reset, win condition, etc.
         + make preview invisible
         + prettier
+        + arrange piece in random order while still knowing the correct placement
 
 
     -->
@@ -40,18 +41,14 @@
 <body>
     <input type="file" id="input" name="input" onchange="loadFile(event)" accept="image/*"/>
     <br></br>
-    <img src="" id="image" onload="preparePieces()"/>
-    <div class="puzzle piece1"></div>
-    <div class="puzzle piece2"></div>
-    <div class="puzzle piece3"></div>
-    <div class="puzzle piece4"></div>
+    <img src="https://thiscatdoesnotexist.com/" id="image" onload="preparePieces()"/>
 
         <canvas onclick="selectPiece(this)" class="pieces" id=firstPiece></canvas>
         <canvas onclick="selectPiece(this)" class="pieces" id=secondPiece></canvas>
         <canvas onclick="selectPiece(this)" class="pieces" id=thirdPiece></canvas>
         <canvas onclick="selectPiece(this)" class="pieces" id=fourthPiece></canvas>
         <br></br>
-        <canvas onclick="placePiece(this)" id="puzzleArea">
+        <canvas onclick="placePiece(event,this)" id="puzzleArea">
         
     </canvas>
     
@@ -60,7 +57,7 @@
         function $(id) {
             return document.getElementById(id);
         }
-        
+        var puzzleArea = $("puzzleArea");
         var image = $("image");
         var piece1 = $("firstPiece");
         var piece2 = $("secondPiece");
@@ -76,6 +73,8 @@
         };
 
         function preparePieces() {
+            puzzleArea.width = image.width;
+            puzzleArea.height = image.height;
             pieceCount = 0;
             allPieces.forEach(canvas => {
                 pieceCount++;
@@ -102,52 +101,54 @@
             if (selected == piece1.id) {
                 console.log("FAR LEFT HAS BEEN SELECTED YES VERY NICE");
                 cutX = cutY = 0;
-                posX = posY = 0;
             }
             if (selected == piece2.id) {
                 console.log("SECOND PIECE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 cutX = image.width/2;
                 cutY = 0;
-                posX = image.width/2;
-                posY = 0;
             }
             if (selected == piece3.id) {
                 console.log("NUMBER THREE");
                 cutX = 0;
                 cutY = image.height/2;
-                posX = 0;
-                posY = image.height/2;
             }
             if (selected == piece4.id) {
                 console.log("the last one.");
                 cutX = cutY = image.width/2;
+            }
+        }
+
+        // function getMousePos(event,canvas) {
+        //     var rect = canvas.getBoundingClientRect();
+        //     return {
+        //         x: event.clientX - rect.left,
+        //         y: event.clientY - rect.top
+        //     };
+        // }
+
+        function placePiece(event,canvas) {
+            var x = event.clientX - canvas.offsetLeft;
+            var y = event.clientY - canvas.offsetTop;
+
+            if (x < image.width/2 && y < image.height/2) {
+                posX = posY = 0;
+            }
+            else if (x > image.width/2 && y < image.height/2) {
+                posX = image.width/2;
+                posY = 0;
+            }
+            else if (x < image.width/2 && y > image.height/2) {
+                posX = 0;
+                posY = image.height/2;
+            }
+            else if (x > image.width/2 && y > image.height/2) {
                 posX = posY = image.width/2;
             }
-        }
-
-        function placePiece(canvas) {
-            var image = $("image");
+            console.log("POSITION IS X:" + x + " AND Y: " + y);
             var context = canvas.getContext("2d");
-            canvas.width = image.width;
-            canvas.height = image.height;
             context.drawImage(image, cutX, cutY, image.width/2, image.height/2, posX, posY, image.width/2, image.height/2);
         }
-            // USE THESE FOR PLACING PIECE IN BIG CANVAS  !!!
-            if ("click on top left") {
-                cutX = cutY = 0;
-                posX = posY = 0;
-            } else if ("click on top right") {
-                cutX = image.width/2;
-                cutY = 0;
-            } else if ("dkaushedj") {
-                cutX = 0;
-                cutY = image.height/2;
-            } else if ("esfjklf") {
-                cutX = image.width/2;
-                cutY = image.height/2;
-            }
-
-
+        
         // (img,sx,sy,swidth,sheight,x,y,width,height);
 
         //controller
