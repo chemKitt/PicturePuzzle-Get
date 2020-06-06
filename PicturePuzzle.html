@@ -9,6 +9,7 @@
         + put selected canvas in selected destination
 
         TO-DO
+        + limit to one piece per quadrant
         + reset, win condition, etc.
         + make preview invisible
         + prettier
@@ -42,13 +43,13 @@
     <input type="file" id="input" name="input" onchange="loadFile(event)" accept="image/*"/>
     <br></br>
     <img src="https://thiscatdoesnotexist.com/" id="image" onload="preparePieces()"/>
-
+        <canvas onclick="placePiece(event,this)" id="puzzleArea"></canvas>
         <canvas onclick="selectPiece(this)" class="pieces" id=firstPiece></canvas>
         <canvas onclick="selectPiece(this)" class="pieces" id=secondPiece></canvas>
         <canvas onclick="selectPiece(this)" class="pieces" id=thirdPiece></canvas>
         <canvas onclick="selectPiece(this)" class="pieces" id=fourthPiece></canvas>
         <br></br>
-        <canvas onclick="placePiece(event,this)" id="puzzleArea">
+        
         
     </canvas>
     
@@ -88,10 +89,10 @@
                     context.drawImage(image, image.width/2, 0, image.width/2, image.height/2, 0, 0, image.width/2, image.height/2);
                 }
                 else if (pieceCount == 3) {
-                    context.drawImage(image, 0, image.width/2, image.width/2, image.height/2, 0, 0, image.width/2, image.height/2);
+                    context.drawImage(image, 0, image.height/2, image.width/2, image.height/2, 0, 0, image.width/2, image.height/2);
                 }
                 else if (pieceCount == 4) {
-                    context.drawImage(image, image.width/2, image.width/2, image.width/2, image.height/2, 0, 0, image.width/2, image.height/2);
+                    context.drawImage(image, image.width/2, image.height/2, image.width/2, image.height/2, 0, 0, image.width/2, image.height/2);
                 }
             });
         }
@@ -114,17 +115,11 @@
             }
             if (selected == piece4.id) {
                 console.log("the last one.");
-                cutX = cutY = image.width/2;
+                cutX = image.width/2;
+                cutY = image.height/2;
+
             }
         }
-
-        // function getMousePos(event,canvas) {
-        //     var rect = canvas.getBoundingClientRect();
-        //     return {
-        //         x: event.clientX - rect.left,
-        //         y: event.clientY - rect.top
-        //     };
-        // }
 
         function placePiece(event,canvas) {
             var x = event.clientX - canvas.offsetLeft;
@@ -142,7 +137,8 @@
                 posY = image.height/2;
             }
             else if (x > image.width/2 && y > image.height/2) {
-                posX = posY = image.width/2;
+                posX = image.width/2;
+                posY = image.height/2;
             }
             console.log("POSITION IS X:" + x + " AND Y: " + y);
             var context = canvas.getContext("2d");
