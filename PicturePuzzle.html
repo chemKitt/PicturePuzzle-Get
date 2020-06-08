@@ -7,13 +7,13 @@
         + split image into 4 canvases
         + select the canvas that is clicked on
         + put selected canvas in selected destination
-
-        TO-DO
-        + limit to one piece per quadrant
         + reset, win condition, etc.
+        + limit to one piece per quadrant
         + make preview invisible
         + prettier
-        + arrange piece in random order while still knowing the correct placement
+
+        TO-DO
+        !!!!!
 
 
     -->
@@ -22,19 +22,22 @@
     <style>
         body {
             user-select: none;
+            background-color:#975acf;
         }
-        #image {
-            border: 3px rgb(145, 202, 235);
-            border-width: 4px;
-            border-radius: 6px;
-            border-style: solid;
+        #image {    
+            display:none;
         }
         #puzzleArea {
-            border: 5px dotted #aaaaaa;
+            border: 25px ridge;
+            border-color:#3a2819;
+            background-color:rgb(245, 245, 245);
         }
-        #puzzlePieces {
-            border: 5px dashed #4408d1;
-            width: 1000px;
+        .pieces {
+            border: 4px black;
+            border-style:solid;
+        }
+        #info {
+            font-family:Arial, Helvetica, sans-serif;
         }
     </style>
 </head>
@@ -42,22 +45,25 @@
 <body>
     <input type="file" id="input" name="input" onchange="loadFile(event)" accept="image/*"/>
     <br></br>
-    <img src="https://thiscatdoesnotexist.com/" id="image" onload="preparePieces()"/>
-        <canvas onclick="placePiece(event,this)" id="puzzleArea"></canvas>
-        <canvas onclick="selectPiece(this)" class="pieces" id=firstPiece></canvas>
-        <canvas onclick="selectPiece(this)" class="pieces" id=secondPiece></canvas>
-        <canvas onclick="selectPiece(this)" class="pieces" id=thirdPiece></canvas>
-        <canvas onclick="selectPiece(this)" class="pieces" id=fourthPiece></canvas>
-        <br></br>
-        
-        
-    </canvas>
+    <div id="info">Refresh page for new cat!</div>
     
+    <img src="https://thiscatdoesnotexist.com/" id="image" onload="preparePieces()"/>
+
+    <canvas onclick="placePiece(event,this)" id="puzzleArea"></canvas>
+    <br></br>
+    <canvas onmouseout="leavePiece(this)" onmouseover="hoverPiece(this)" onclick="selectPiece(this)" class="pieces" id=firstPiece></canvas>
+    <canvas onmouseout="leavePiece(this)" onmouseover="hoverPiece(this)" onclick="selectPiece(this)" class="pieces" id=secondPiece></canvas>
+    <canvas onmouseout="leavePiece(this)" onmouseover="hoverPiece(this)" onclick="selectPiece(this)" class="pieces" id=thirdPiece></canvas>
+    <canvas onmouseout="leavePiece(this)" onmouseover="hoverPiece(this)" onclick="selectPiece(this)" class="pieces" id=fourthPiece></canvas>
+    <br></br>
+    <button onclick="resetPuzzle()">Reset</button>
+
     <script>
         //model
         function $(id) {
             return document.getElementById(id);
         }
+
         var puzzleArea = $("puzzleArea");
         var image = $("image");
         var piece1 = $("firstPiece");
@@ -66,11 +72,18 @@
         var piece4 = $("fourthPiece");
         allPieces = [piece1, piece2, piece3, piece4]
 
-        selected = null;
+        var placed1 = false;
+        var placed2 = false;
+        var placed3 = false;
+        var placed4 = false;
+
+        var selected = "nothing";
+        var winCheck = 0;
 
         //view
         var loadFile = function(event) {
             $("image").src = URL.createObjectURL(event.target.files[0]);
+            resetPuzzle();
         };
 
         function preparePieces() {
@@ -96,53 +109,110 @@
                 }
             });
         }
-    
+
+        function hoverPiece(piece) {
+            piece.style.opacity = 0.5;
+        }
+        function leavePiece(piece) {
+            piece.style.opacity = 1;
+        }
+        
         function selectPiece(piece) {
-            selected = piece.id;
-            if (selected == piece1.id) {
-                console.log("FAR LEFT HAS BEEN SELECTED YES VERY NICE");
+            selected = piece;
+            if (piece.id == piece1.id) {
+                console.log("TOP LEFT HAS BEEN SELECTED YES VERY NICE");
                 cutX = cutY = 0;
+                isCorrect = 1;
             }
-            if (selected == piece2.id) {
+            if (piece.id == piece2.id) {
                 console.log("SECOND PIECE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 cutX = image.width/2;
                 cutY = 0;
+                isCorrect = 2;
             }
-            if (selected == piece3.id) {
+            if (piece.id == piece3.id) {
                 console.log("NUMBER THREE");
                 cutX = 0;
                 cutY = image.height/2;
+                isCorrect = 3;
             }
-            if (selected == piece4.id) {
+            if (piece.id == piece4.id) {
                 console.log("the last one.");
                 cutX = image.width/2;
                 cutY = image.height/2;
-
+                isCorrect = 4;
             }
         }
 
         function placePiece(event,canvas) {
-            var x = event.clientX - canvas.offsetLeft;
-            var y = event.clientY - canvas.offsetTop;
-
-            if (x < image.width/2 && y < image.height/2) {
-                posX = posY = 0;
+            var x = event.clientX - canvas.offsetLeft - 25;
+            var y = event.clientY - canvas.offsetTop - 25;
+            
+            if (selected == "nothing") {
+                console.log("no piece selected");
             }
-            else if (x > image.width/2 && y < image.height/2) {
+            else if (x < image.width/2 && y < image.height/2 && placed1 == false) {
+                posX = posY = 0;
+                if (isCorrect == 1) {winCheck++;}
+                selected.style.visibility = "hidden";
+                placed1 = true;
+                drawing();
+            }
+            else if (x > image.width/2 && y < image.height/2 && placed2 == false) {
                 posX = image.width/2;
                 posY = 0;
+                if (isCorrect == 2) {winCheck++;}
+                selected.style.visibility = "hidden";
+                placed2 = true;
+                drawing();
             }
-            else if (x < image.width/2 && y > image.height/2) {
+            else if (x < image.width/2 && y > image.height/2 && placed3 == false) {
                 posX = 0;
                 posY = image.height/2;
+                if (isCorrect == 3) {winCheck++;}
+                selected.style.visibility = "hidden";
+                placed3 = true;
+                drawing();
             }
-            else if (x > image.width/2 && y > image.height/2) {
+            else if (x > image.width/2 && y > image.height/2 && placed4 == false) {
                 posX = image.width/2;
                 posY = image.height/2;
+                if (isCorrect == 4) {winCheck++;}
+                selected.style.visibility = "hidden";
+                placed4 = true;
+                drawing();
             }
-            console.log("POSITION IS X:" + x + " AND Y: " + y);
-            var context = canvas.getContext("2d");
-            context.drawImage(image, cutX, cutY, image.width/2, image.height/2, posX, posY, image.width/2, image.height/2);
+            selected = "nothing";
+
+            function drawing() {
+                console.log("POSITION IS X:" + x + " AND Y: " + y);
+                var context = canvas.getContext("2d");
+                context.drawImage(image, cutX, cutY, image.width/2, image.height/2, posX, posY, image.width/2, image.height/2);
+
+                var audio = new Audio("https://www.soundsnap.com/streamers/play.php?id=1591620512.4633:259408df8e9bbd1101f8d3232b4a426ff5d2d2d6:d46bed01df5b90f4456f73dbd8af103b0eb3bc13bcb16c4e055dddd745d47ededfb0a5edb836a226ddc39ba159317bad44dbe22832c5afd3d1adfe8a7e12304129e4d39bec6b37ed3b78c050d48cf58973d9e91b76560be227b22f58ea583de2c50cb8dc2e8d8f4648b8f017c164364957c3d2b42db6d8bdbfa954d7995c6aa68158fc54648ddb8306ad1edff1f5de30d6e3b7174e4c0ddda8c6ba10854b1550eb903672593f9b3dd334a12c44c53e8062437d600e5ac28479e33e646d8af560ad4bd0d329f301eabcdb4d254aca4116de64b26b3ee508ca570eaef7d6562bcd8fa518e92f7bf976ac3fbd304c2942af308c7cecf34e3e91ca4ad26dedb453623b828037617bc9aa124f6b36481c08dd18238230fb857dccd650a7b64bb2ee6b7ed9b3ed512e0a105ee937008cf43ff18444375a11d61773eef44a2af11588d7");
+                audio.play();
+            }
+
+            if (winCheck == 4) {
+                puzzleArea.style.borderColor = "#18915e";
+                setTimeout(winScreen,1000);
+            }
+        }
+
+        function resetPuzzle() {
+            context = puzzleArea.getContext("2d");
+            allPieces.forEach(piece => {
+                piece.style.visibility = "visible";
+            });
+            context.clearRect(0, 0, puzzleArea.width, puzzleArea.height);
+            winCheck = 0;
+            placed1 = placed2 = placed3 = placed4 = false;
+        }
+
+        function winScreen() {
+            var audio = new Audio("https://www.soundsnap.com/streamers/play.php?id=1591621016.6094:e0ce6b32a9e6d9b29c1d9be9552839deb984eaa6:90cd52fbee048161121891411695eabbb7e2681bceb66c993167544fc3747bfb50a87b68d0c8d829da8b8f36eb11481287d6ea9a8e24343f48553772a7fdd237d1e55cb120778a12e5f6610d99a107c75cb45133d212fc93213cfd0548e5a8ad2fdaee93fc6016a6083507e59ca9980a13e22149205c0669c0e18dc4bc9b2125d35a6dbc8df4a81f3ca83cb8cc34a8b1d62e29fd3ededf8aff77bd8398acc7166d46d55465015c56a83f46c8f5b5512b162527d4461e802474abf4c4c77e52618ecfd359d389bd6436e706ee419263c7c9c9863addac1ae3ddff6dadae44271fd253e6d82cc5e2469458113ae1ff7a97bad460bebc0904b849681e2b366b8c37ea771cc96194ae9443c4764f9b5ed5ac3e23dda4645e0088390ee8e1070a9b82875f0d74f3351c48ad24f7f7b30453983d1f426b7c237baf0fda29957ce50621");
+            audio.play();
+            alert("Puzzle complete!");
         }
         
         // (img,sx,sy,swidth,sheight,x,y,width,height);
