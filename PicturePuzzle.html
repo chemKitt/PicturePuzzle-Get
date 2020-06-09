@@ -198,6 +198,13 @@
             }
         }
 
+        function winScreen() {
+            var audio = new Audio("http://mattersofgrey.com/audio/Minecraft-meow3.mp3");
+            audio.play();
+            alert("Puzzle complete!");
+        }
+
+        //controller
         function resetPuzzle() {
             context = puzzleArea.getContext("2d");
             allPieces.forEach(piece => {
@@ -207,17 +214,6 @@
             winCheck = 0;
             placed1 = placed2 = placed3 = placed4 = false;
         }
-
-        function winScreen() {
-            var audio = new Audio("http://mattersofgrey.com/audio/Minecraft-meow3.mp3");
-            audio.play();
-            alert("Puzzle complete!");
-        }
-        
-        // (img,sx,sy,swidth,sheight,x,y,width,height);
-
-        //controller
-
     </script>
 </body>
 </html>
